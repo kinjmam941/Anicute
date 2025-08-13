@@ -798,12 +798,7 @@ HTML_TEMPLATE = """
                 </div>
             </div>
             
-            <div class="episode-stats">
-                <div class="stat-item">
-                    <div class="stat-value">{{ latest_episode or 'Unknown' }}</div>
-                    <div class="stat-label">Latest Episode</div>
-                </div>
-            </div>
+            
             
             {% if episode_discovery %}
             <div class="episode-stats">
