@@ -75,13 +75,11 @@ HTML_TEMPLATE = """
             max-width: 1400px;
             margin: 0 auto;
             padding: 15px 20px;
-        }
-        
-        .header-top {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .logo {
@@ -92,6 +90,7 @@ HTML_TEMPLATE = """
             font-weight: bold;
             font-size: 1.5rem;
             transition: transform 0.3s ease;
+            order: 1;
         }
         
         .logo:hover {
@@ -120,6 +119,7 @@ HTML_TEMPLATE = """
         nav {
             display: none;
             gap: 8px;
+            order: 3;
         }
         
         nav a {
@@ -149,6 +149,7 @@ HTML_TEMPLATE = """
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            order: 2;
         }
         
         .mobile-menu-btn:hover {
@@ -159,6 +160,7 @@ HTML_TEMPLATE = """
         .search-container {
             position: relative;
             width: 100%;
+            order: 4;
         }
         
         .search-bar {
@@ -315,6 +317,16 @@ HTML_TEMPLATE = """
             border: 1px solid rgba(220, 53, 69, 0.3);
         }
         
+        .episode-message {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        
         /* Video Player */
         .video-section {
             margin: 30px 0;
@@ -399,6 +411,7 @@ HTML_TEMPLATE = """
         
         .discover-btn {
             background: linear-gradient(135deg, var(--accent-color), #5555ff);
+            display: none;
         }
         
         .load-episode-btn:hover, .discover-btn:hover {
@@ -683,12 +696,16 @@ HTML_TEMPLATE = """
         
         /* Responsive Design */
         @media (min-width: 768px) {
-            .header-top {
-                margin-bottom: 0;
+            .header-container {
+                flex-wrap: nowrap;
+                gap: 20px;
             }
             
             .search-container {
-                max-width: 400px;
+                flex-grow: 1;
+                order: 2;
+                width: auto;
+                max-width: 600px;
             }
             
             .mobile-menu-btn {
@@ -697,6 +714,7 @@ HTML_TEMPLATE = """
             
             nav {
                 display: flex;
+                order: 3;
             }
             
             .anime-grid {
@@ -745,20 +763,10 @@ HTML_TEMPLATE = """
 <body>
     <header>
         <div class="header-container">
-            <div class="header-top">
-                <a href="/" class="logo">
-                    <img src="https://i.pinimg.com/736x/83/c3/44/83c344c68b92ac98c4c1451d4d0478e6.jpg" alt="Anicute Logo">
-                    <span class="logo-text">Anicute</span>
-                </a>
-                
-                <nav>
-                    <a href="/">Home</a>
-                    <a href="/new">New Releases</a>
-                    <a href="/trending">Trending</a>
-                </nav>
-                
-                <button class="mobile-menu-btn" aria-label="Open menu">☰</button>
-            </div>
+            <a href="/" class="logo">
+                <img src="https://i.pinimg.com/736x/83/c3/44/83c344c68b92ac98c4c1451d4d0478e6.jpg" alt="Anicute Logo">
+                <span class="logo-text">Anicute</span>
+            </a>
             
             <div class="search-container">
                 <form class="search-bar" action="/search" method="GET">
@@ -766,6 +774,14 @@ HTML_TEMPLATE = """
                     <button type="submit" aria-label="Search">🔍</button>
                 </form>
             </div>
+            
+            <nav>
+                <a href="/">Home</a>
+                <a href="/new">New Releases</a>
+                <a href="/trending">Trending</a>
+            </nav>
+            
+            <button class="mobile-menu-btn" aria-label="Open menu">☰</button>
         </div>
     </header>
 
@@ -779,6 +795,13 @@ HTML_TEMPLATE = """
                 <div class="anime-title-section">
                     <div class="anime-title-main">{{ anime_title }}</div>
                     <div class="current-episode">Episode {{ current_episode }}</div>
+                </div>
+            </div>
+            
+            <div class="episode-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{ latest_episode or 'Unknown' }}</div>
+                    <div class="stat-label">Latest Episode</div>
                 </div>
             </div>
             
@@ -840,6 +863,10 @@ HTML_TEMPLATE = """
                         <button class="load-episode-btn" onclick="loadEpisode()">Load Episode</button>
                     </div>
                     <button class="discover-btn" onclick="discoverEpisodes()">🔍 Discover All Episodes</button>
+                </div>
+                
+                <div class="episode-message">
+                    Sometimes some episodes count are not loaded properly. Try entering the latest episode no. to load.
                 </div>
                 
                 <div class="episode-navigation">
@@ -1304,10 +1331,15 @@ def watch(link_url):
     # Extract anime title for better page title
     page_title = "Watch Anime"
     anime_title = "Unknown Anime"
+    title_slug = None
+    current_episode = None
+    latest_episode = None
     if episode_nav:
-        anime_title = episode_nav['title_slug'].replace('-', ' ').title()
-        episode_num = episode_nav['current_episode']
-        page_title = f"Watch {anime_title} - Episode {episode_num}"
+        title_slug = episode_nav['title_slug']
+        anime_title = title_slug.replace('-', ' ').title()
+        current_episode = episode_nav['current_episode']
+        page_title = f"Watch {anime_title} - Episode {current_episode}"
+        latest_episode = get_latest_episode(title_slug)
     
     return render_template_string(HTML_TEMPLATE, 
                                page_title=page_title,
@@ -1315,9 +1347,10 @@ def watch(link_url):
                                embed_url=embed_url,
                                video_src=video_src,
                                episode_nav=episode_nav,
-                               title_slug=episode_nav['title_slug'] if episode_nav else None,
-                               current_episode=episode_nav['current_episode'] if episode_nav else None,
-                               episode_discovery=None)
+                               title_slug=title_slug,
+                               current_episode=current_episode,
+                               episode_discovery=None,
+                               latest_episode=latest_episode)
 
 @app.route('/discover/<path:link_url>')
 def discover_anime_episodes(link_url):
@@ -1341,6 +1374,7 @@ def discover_anime_episodes(link_url):
     anime_title = title_slug.replace('-', ' ').title()
     episode_num = episode_nav['current_episode']
     page_title = f"Watch {anime_title} - Episode {episode_num}"
+    latest_episode = get_latest_episode(title_slug)
     
     return render_template_string(HTML_TEMPLATE, 
                                page_title=page_title,
@@ -1350,7 +1384,8 @@ def discover_anime_episodes(link_url):
                                episode_nav=episode_nav,
                                title_slug=title_slug,
                                current_episode=episode_num,
-                               episode_discovery=discovery_info)
+                               episode_discovery=discovery_info,
+                               latest_episode=latest_episode)
 
 if __name__ == '__main__':
     logger.info("Starting Enhanced Anicute anime streaming server...")
