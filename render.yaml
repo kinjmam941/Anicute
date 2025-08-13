@@ -7,10 +7,8 @@ services:
     plan: free              # Free tier
     branch: main            # Branch to deploy from
     buildCommand: pip install -r requirements.txt
-    startCommand: python server.py
+    startCommand: gunicorn server:app --bind 0.0.0.0:$PORT --workers 3
     autoDeploy: true
     envVars:
       - key: FLASK_ENV
         value: production
-      - key: PORT
-        value: 10000        # optional, Flask uses os.environ.get("PORT")
