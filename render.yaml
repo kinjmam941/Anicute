@@ -1,0 +1,16 @@
+# render.yaml
+services:
+  - type: web
+    name: anicute
+    env: python
+    region: oregon          # Change to your preferred region
+    plan: free              # Free tier
+    branch: main            # Branch to deploy from
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    autoDeploy: true
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 10000        # optional, Flask uses os.environ.get("PORT")
