@@ -16,413 +16,569 @@ HTML_TEMPLATE = """
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Anicute</title>
     <style>
-        body {
-            font-family: 'Anime Ace', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #1a1a1a;
-            color: #ffffff;
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #ff5252;
+            --bg-color: #1a1a1a;
+            --card-bg: rgba(255,255,255,0.1);
+            --text-color: #ffffff;
+            --text-secondary: #cccccc;
         }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 100%;
+            padding: 15px;
+            margin: 0 auto;
+        }
+        
         h1 {
-            color: #ff6b6b;
+            color: var(--primary-color);
             text-align: center;
-            margin-bottom: 30px;
+            margin: 15px 0;
+            font-size: 1.5rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
+        
         header {
-            background: linear-gradient(135deg, #ff6b6b, #ff5252);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 12px 15px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        header .logo img {
-            height: 50px;
-            border-radius: 8px;
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
+        
+        .logo img {
+            height: 40px;
+            border-radius: 5px;
+        }
+        
         nav {
-            display: flex;
-            align-items: center;
+            display: none; /* Hidden by default on mobile */
         }
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: bold;
-            margin: 0 10px;
-            transition: color 0.3s;
+        
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
-        nav a:hover {
-            color: #ffdede;
-        }
+        
         .search-bar {
+            width: 100%;
+            margin-top: 10px;
             display: flex;
-            align-items: center;
         }
+        
         .search-bar input {
-            padding: 8px;
+            flex: 1;
+            padding: 10px;
+            border: none;
             border-radius: 5px 0 0 5px;
-            border: none;
-            background-color: rgba(255,255,255,0.1);
-            color: #ffffff;
-            backdrop-filter: blur(10px);
-        }
-        .search-bar button {
-            padding: 8px 12px;
-            border-radius: 0 5px 5px 0;
-            border: none;
             background-color: rgba(255,255,255,0.2);
             color: white;
+            font-size: 1rem;
+        }
+        
+        .search-bar input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .search-bar button {
+            padding: 0 15px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: rgba(0,0,0,0.2);
+            color: white;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s;
-            backdrop-filter: blur(10px);
         }
-        .search-bar button:hover {
-            background-color: rgba(255,255,255,0.3);
-        }
+        
         .hero-image {
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 8px;
+            overflow: hidden;
         }
+        
         .hero-image img {
             width: 100%;
             height: auto;
-            border-radius: 10px;
+            display: block;
         }
+        
         .results {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 15px 0;
         }
+        
         .anime-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+            background: var(--card-bg);
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
+        
         .anime-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
         }
+        
         .anime-image {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
-            border-bottom: 3px solid #ff6b6b;
+            border-bottom: 3px solid var(--primary-color);
         }
+        
         .anime-info {
-            padding: 15px;
+            padding: 12px;
         }
+        
         .anime-title {
             font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 1.1em;
-            color: #ffffff;
+            font-size: 1rem;
+            margin-bottom: 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        
         .anime-episode {
-            color: #aaaaaa;
-            font-size: 0.85em;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
             margin-bottom: 8px;
         }
+        
         .anime-genres {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 5px;
             margin-bottom: 10px;
         }
+        
         .genre-tag {
-            background-color: #ff6b6b;
+            background-color: var(--primary-color);
             color: white;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.75em;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
             font-weight: 500;
         }
-        .watch-btn {
-            display: block;
-            background-color: #ff6b6b;
-            color: white;
-            padding: 8px 0;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            text-align: center;
-            transition: background-color 0.2s;
-            margin-top: 10px;
-        }
-        .watch-btn:hover {
-            background-color: #ff5252;
-        }
+        
         .description {
-            color: #cccccc;
-            font-size: 0.85em;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
             margin-bottom: 10px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        .loading {
-            text-align: center;
-            font-size: 1.1em;
-            color: #aaaaaa;
-            padding: 40px;
-        }
-        .error {
-            text-align: center;
-            font-size: 1.1em;
-            color: #ff6b6b;
-            padding: 40px;
-        }
-        .pagination {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .pagination a {
-            color: #ff6b6b;
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: bold;
-        }
-        .pagination a:hover {
-            color: #ff5252;
-        }
-        .episode-list {
-            margin-top: 20px;
-        }
-        .episode-list h2 {
-            color: #ff6b6b;
-        }
-        .episode-item {
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            margin: 10px 0;
+        
+        .watch-btn {
+            display: block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 0;
             border-radius: 5px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .episode-item a {
-            color: #ff6b6b;
+            text-align: center;
             text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
         }
-        .episode-item a:hover {
-            color: #ff5252;
+        
+        .watch-btn:hover {
+            background-color: var(--secondary-color);
         }
+        
         .embed-container {
             position: relative;
+            width: 100%;
             padding-bottom: 56.25%;
-            height: 0;
+            margin: 15px 0;
+            border-radius: 8px;
             overflow: hidden;
-            max-width: 100%;
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: #000;
         }
+        
         .embed-container iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            border: none;
         }
-        .download-btn, .episode-nav-btn {
-            display: inline-block;
-            background-color: #6b6bff;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
+        
+        .player-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        .player-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
             text-decoration: none;
             font-weight: bold;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
             text-align: center;
-            transition: background-color 0.2s;
-            margin: 10px 5px;
         }
-        .download-btn:hover, .episode-nav-btn:hover {
-            background-color: #5252ff;
+        
+        .download-btn {
+            background-color: #6b6bff;
+            color: white;
         }
-        footer {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            text-align: center;
-            margin-top: 40px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
+        
+        .episode-nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .episode-selector {
+            width: 100%;
+            margin: 15px 0;
+        }
+        
+        .episode-selector select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: var(--card-bg);
+            color: white;
             border: 1px solid rgba(255,255,255,0.2);
         }
-        footer p {
-            margin: 5px 0;
-            color: #aaaaaa;
-            font-size: 0.9em;
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
         }
+        
+        .pagination a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: var(--card-bg);
+        }
+        
+        .loading, .error {
+            text-align: center;
+            padding: 40px 0;
+            font-size: 1.1rem;
+        }
+        
+        .error {
+            color: var(--primary-color);
+        }
+        
+        footer {
+            background: var(--card-bg);
+            padding: 15px;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .socials {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
         .socials a {
-            color: #ff6b6b;
-            margin: 0 10px;
+            color: var(--primary-color);
             text-decoration: none;
         }
-        .socials a:hover {
-            color: #ff5252;
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            display: none;
+            background: rgba(0,0,0,0.9);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
+        
+        .mobile-menu.active {
+            display: flex;
+        }
+        
+        .mobile-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin: 15px 0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        /* Tablet and larger screens */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 750px;
+                padding: 20px;
             }
-            nav {
-                flex-direction: column;
-                align-items: flex-start;
-                margin: 10px 0;
-            }
-            nav a {
-                margin: 5px 0;
-            }
-            .search-bar {
-                width: 100%;
-            }
-            .search-bar input {
-                width: 70%;
-            }
-            .search-bar button {
-                width: 30%;
-            }
+            
             .results {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
             }
-            .anime-image {
-                height: 180px;
+            
+            .mobile-menu-btn {
+                display: none;
             }
+            
+            nav {
+                display: flex;
+                gap: 15px;
+            }
+            
+            nav a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            
+            .search-bar {
+                width: auto;
+                margin-top: 0;
+                margin-left: 15px;
+            }
+            
+            .header-top {
+                flex-direction: row;
+            }
+            
             .hero-image img {
                 height: 250px;
+                object-fit: cover;
             }
         }
-        @media (max-width: 480px) {
+        
+        /* Desktop screens */
+        @media (min-width: 992px) {
+            .container {
+                max-width: 1000px;
+            }
+            
             .results {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
             }
+            
             .anime-image {
-                height: 160px;
-            }
-            .hero-image img {
-                height: 200px;
+                height: 220px;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img src="https://i.pinimg.com/736x/83/c3/44/83c344c68b92ac98c4c1451d4d0478e6.jpg" alt="Anicute Logo">
+        <div class="header-top">
+            <div class="logo">
+                <img src="https://i.pinimg.com/736x/83/c3/44/83c344c68b92ac98c4c1451d4d0478e6.jpg" alt="Anicute Logo">
+            </div>
+            <button class="mobile-menu-btn">☰</button>
         </div>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/new">New Releases</a>
-            <a href="/trending">Trending</a>
-        </nav>
         <div class="search-bar">
             <form action="/search" method="GET">
                 <input type="text" name="q" placeholder="Search anime..." required>
-                <button type="submit">Search</button>
+                <button type="submit">Go</button>
             </form>
         </div>
     </header>
-
-    <h1>{{ page_title }}</h1>
-
-    {% if is_home %}
-    <div class="hero-image">
-        <img src="https://i.pinimg.com/1200x/44/39/9d/44399dc0ccdb2c2ea605dc7490d0c6f9.jpg" alt="Hero Image">
+    
+    <div class="mobile-menu">
+        <button class="close-menu">×</button>
+        <a href="/">Home</a>
+        <a href="/new">New Releases</a>
+        <a href="/trending">Trending</a>
     </div>
-    {% endif %}
 
-    {% if embed_url %}
-    <div class="embed-container">
-        <iframe src="{{ embed_url }}" frameborder="0" scrolling="no" allowfullscreen></iframe>
-    </div>
-    {% if video_src %}
-    <a href="{{ video_src }}" class="download-btn" download>Download Video</a>
-    {% endif %}
-    {% if episode_nav %}
-    <div>
-        {% if episode_nav.prev %}
-        <a href="/watch/{{ episode_nav.prev }}" class="episode-nav-btn">Previous Episode</a>
-        {% endif %}
-        {% if episode_nav.next %}
-        <a href="/watch/{{ episode_nav.next }}" class="episode-nav-btn">Next Episode</a>
-        {% endif %}
-    </div>
-    {% endif %}
-    {% endif %}
+    <div class="container">
+        <h1>{{ page_title }}</h1>
 
-    {% if error %}
-    <div class="error">
-        {{ error }}
-        {% if debug_info %}
-        <div style="margin-top: 20px; color: #aaa; font-size: 0.8em;">
-            Debug Info: {{ debug_info }}
+        {% if is_home %}
+        <div class="hero-image">
+            <img src="https://i.pinimg.com/1200x/44/39/9d/44399dc0ccdb2c2ea605dc7490d0c6f9.jpg" alt="Hero Image">
         </div>
         {% endif %}
-    </div>
-    {% elif not anime_list %}
-    <div class="loading">
-        Loading anime...
-    </div>
-    {% else %}
-    <div class="results">
-        {% for anime in anime_list %}
-        <div class="anime-card">
-            <img src="{{ anime.thumbnail_url }}" alt="{{ anime.title }}" class="anime-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
-            <div class="anime-info">
-                <div class="anime-title">{{ anime.title }}</div>
-                <div class="anime-episode">Episode {{ anime.episode }} • {{ anime.year }}</div>
-                <div class="anime-genres">
-                    {% for genre in anime.genres.split(', ') %}
-                    <span class="genre-tag">{{ genre }}</span>
-                    {% endfor %}
+
+        {% if embed_url %}
+        <div class="embed-container">
+            <iframe src="{{ embed_url }}" frameborder="0" allowfullscreen></iframe>
+        </div>
+        
+        <div class="player-actions">
+            {% if video_src %}
+            <a href="{{ video_src }}" class="player-btn download-btn" download>Download</a>
+            {% endif %}
+            {% if episode_nav %}
+                {% if episode_nav.prev %}
+                <a href="/watch/{{ episode_nav.prev }}" class="player-btn episode-nav-btn">← Previous</a>
+                {% endif %}
+                
+                {% if current_episode %}
+                <div class="episode-selector">
+                    <select onchange="location.href='/watch/'+this.value">
+                        {% for ep in episode_range %}
+                            <option value="{{ title_slug }}-episode-{{ ep }}" {% if ep == current_episode %}selected{% endif %}>
+                                Episode {{ ep }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="description">{{ anime.description }}</div>
-                <a href="/watch/{{ anime.link_url }}" class="watch-btn">Watch Episode {{ anime.episode }}</a>
-            </div>
+                {% endif %}
+                
+                {% if episode_nav.next %}
+                <a href="/watch/{{ episode_nav.next }}" class="player-btn episode-nav-btn">Next →</a>
+                {% endif %}
+            {% endif %}
         </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+        {% endif %}
 
-    {% if pagination %}
-    <div class="pagination">
-        {% if page > 1 %}
-        <a href="{{ pagination.prev_url }}">Previous</a>
+        {% if error %}
+        <div class="error">
+            {{ error }}
+            {% if debug_info %}
+            <div style="margin-top: 20px; color: #aaa; font-size: 0.8em;">
+                Debug Info: {{ debug_info }}
+            </div>
+            {% endif %}
+        </div>
+        {% elif not anime_list %}
+        <div class="loading">
+            Loading anime...
+        </div>
+        {% else %}
+        <div class="results">
+            {% for anime in anime_list %}
+            <div class="anime-card">
+                <img src="{{ anime.thumbnail_url }}" alt="{{ anime.title }}" class="anime-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                <div class="anime-info">
+                    <div class="anime-title">{{ anime.title }}</div>
+                    <div class="anime-episode">Episode {{ anime.episode }} • {{ anime.year }}</div>
+                    <div class="anime-genres">
+                        {% for genre in anime.genres.split(', ') %}
+                        <span class="genre-tag">{{ genre }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="description">{{ anime.description }}</div>
+                    <a href="/watch/{{ anime.link_url }}" class="watch-btn">Watch Now</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         {% endif %}
-        <span>Page {{ page }}</span>
-        {% if pagination.has_next %}
-        <a href="{{ pagination.next_url }}">Next</a>
+
+        {% if pagination %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ pagination.prev_url }}">Previous</a>
+            {% endif %}
+            <span>Page {{ page }}</span>
+            {% if pagination.has_next %}
+            <a href="{{ pagination.next_url }}">Next</a>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
-    {% endif %}
 
     <footer>
-        <p>DMCA Regulation: This website complies with DMCA regulations. If you are a copyright holder and believe your content is used without permission, please contact us.</p>
-        <p>We do not own the media and data on this website; it is served by third-party API.</p>
+        <p>DMCA Regulation: This website complies with DMCA regulations.</p>
+        <p>We do not own the media and data on this website.</p>
         <div class="socials">
             <a href="https://twitter.com">Twitter</a>
             <a href="https://facebook.com">Facebook</a>
             <a href="https://instagram.com">Instagram</a>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        const closeBtn = document.querySelector('.close-menu');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+        
+        // Close menu when clicking outside
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+        
+        // Auto-focus search input on desktop
+        if (window.innerWidth > 768) {
+            document.querySelector('.search-bar input').focus();
+        }
+    </script>
 </body>
 </html>
 """
@@ -503,10 +659,20 @@ def get_episode_navigation(link_url):
             return None
         title, episode = match.groups()
         episode_num = int(episode)
-        nav = {}
-        if episode_num > 1:
-            nav['prev'] = f"{title}-episode-{episode_num-1}"
-        nav['next'] = f"{title}-episode-{episode_num+1}"
+        
+        # Generate episode range (current episode ±5)
+        start_ep = max(1, episode_num - 5)
+        end_ep = episode_num + 5  # In a real app, you'd want to get the total episodes
+        
+        episode_range = list(range(start_ep, end_ep + 1))
+        
+        nav = {
+            'prev': f"{title}-episode-{episode_num-1}" if episode_num > 1 else None,
+            'next': f"{title}-episode-{episode_num+1}",
+            'title_slug': title,
+            'current_episode': episode_num,
+            'episode_range': episode_range
+        }
         return nav
     except Exception as e:
         logger.error(f"Failed to generate episode navigation: {e}")
@@ -610,11 +776,15 @@ def watch(link_url):
     embed_url = f"https://2anime.xyz/embed/{link_url}"
     video_src = extract_video_src(embed_url)
     episode_nav = get_episode_navigation(link_url)
+    
     return render_template_string(HTML_TEMPLATE, 
                                page_title="Watch Anime",
                                embed_url=embed_url,
                                video_src=video_src,
                                episode_nav=episode_nav,
+                               title_slug=episode_nav['title_slug'] if episode_nav else None,
+                               current_episode=episode_nav['current_episode'] if episode_nav else None,
+                               episode_range=episode_nav['episode_range'] if episode_nav else None,
                                is_home=False)
 
 if __name__ == '__main__':
