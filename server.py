@@ -399,7 +399,6 @@ HTML_TEMPLATE = """
         
         .discover-btn {
             background: linear-gradient(135deg, var(--accent-color), #5555ff);
-            display: none; /* Hide the discover button */
         }
         
         .load-episode-btn:hover, .discover-btn:hover {
@@ -840,7 +839,6 @@ HTML_TEMPLATE = """
                         >
                         <button class="load-episode-btn" onclick="loadEpisode()">Load Episode</button>
                     </div>
-                    <!-- Discovery button is hidden via CSS -->
                     <button class="discover-btn" onclick="discoverEpisodes()">🔍 Discover All Episodes</button>
                 </div>
                 
@@ -1058,24 +1056,38 @@ def get_fallback_data():
         }
     ]
 
+def get_latest_episode(title_slug):
+    query = title_slug.replace('-', '+')
+    data = fetch_api_data(f"https://animeapi.skin/search?q={query}")
+    if not data:
+        return None
+    for anime in data:
+        slug_base = anime['link_url'].rsplit('-episode-', 1)[0]
+        if slug_base == title_slug:
+            try:
+                return int(anime['episode'])
+            except:
+                pass
+    return None
+
 def check_episode_exists(title_slug, episode_num, scraper):
-    """Check if a specific episode exists by making a request to the embed URL"""
+    """Check if a specific episode exists by checking for video source"""
     try:
         embed_url = f"https://2anime.xyz/embed/{title_slug}-episode-{episode_num}"
         response = scraper.get(embed_url, timeout=10)
-        
-        # Check if the response contains video content or error indicators
-        if response.status_code == 200:
-            content = response.text.lower()
-            # Look for indicators that the episode exists
-            if any(indicator in content for indicator in ['<video', 'player', 'stream', 'source']):
+        if response.status_code != 200:
+            return False
+        soup = BeautifulSoup(response.text, 'html.parser')
+        video = soup.find('video')
+        if video:
+            source = video.find('source')
+            if source and 'src' in source.attrs and source['src']:
                 return True
-            # Look for error indicators
-            if any(error in content for error in ['not found', '404', 'error', 'no episode']):
-                return False
-            # If we get a successful response without clear error indicators, assume it exists
-            return True
-        return False
+        # Check for error indicators
+        content_lower = response.text.lower()
+        if any(error in content_lower for error in ['not found', '404', 'error', 'no episode', 'no video']):
+            return False
+        return False  # If no video source found, assume unavailable
     except Exception as e:
         logger.debug(f"Episode {episode_num} check failed: {e}")
         return False
@@ -1092,6 +1104,12 @@ def discover_episodes(title_slug, max_episodes=2000, batch_size=50):
     scraper = cloudscraper.create_scraper(
         browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
     )
+    
+    # Get latest episode from API to set accurate max
+    latest = get_latest_episode(title_slug)
+    if latest:
+        max_episodes = latest + 50  # Buffer for ongoing series or errors
+        logger.info(f"Set max_episodes to {max_episodes} based on API data")
     
     available_episodes = set()
     checked_episodes = 0
@@ -1130,31 +1148,32 @@ def discover_episodes(title_slug, max_episodes=2000, batch_size=50):
             else:
                 consecutive_empty_batches = 0
                 
-            logger.info(f"Batch {batch_range.start}-{batch_range.stop-1}: Found {len(batch_result)} episodes "
-                       f"(Total: {len(available_episodes)}/{checked_episodes})")
+            logger.info(f"Batch {batch_range[0]}-{batch_range[-1]}: Found {len(batch_result)} episodes "
+                        f"(Total: {len(available_episodes)}/{checked_episodes})")
             
             # Early termination if we find too many consecutive empty batches
-            if consecutive_empty_batches >= 5 and len(available_episodes) > 0:
+            if consecutive_empty_batches >= 3 and len(available_episodes) > 0:  # Reduced to 3 for faster stopping
                 logger.info("Stopping early - found consecutive empty batches")
                 break
     
     end_time = time.time()
     time_taken = round(end_time - start_time, 2)
     
-    # Calculate statistics
-    total_episodes = max(available_episodes) if available_episodes else checked_episodes
-    success_rate = round((len(available_episodes) / checked_episodes) * 100, 1) if checked_episodes > 0 else 0
+    # Use API latest as total if available, else max available
+    total_episodes = latest or max(available_episodes) if available_episodes else checked_episodes
+    available_count = len(available_episodes)
+    success_rate = round((available_count / total_episodes) * 100, 1) if total_episodes > 0 else 0
     
     discovery_info = {
         'total_episodes': total_episodes,
-        'available_episodes': len(available_episodes),
+        'available_episodes': available_count,
         'available_list': sorted(list(available_episodes)),
         'success_rate': success_rate,
         'time_taken': time_taken,
         'checked_episodes': checked_episodes
     }
     
-    logger.info(f"Discovery complete for {title_slug}: {len(available_episodes)} episodes found in {time_taken}s")
+    logger.info(f"Discovery complete for {title_slug}: {available_count} episodes found in {time_taken}s")
     return discovery_info
 
 def extract_video_src(embed_url):
