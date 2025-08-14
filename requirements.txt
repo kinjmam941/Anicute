@@ -1,5 +1,5 @@
 Flask==2.3.3
 cloudscraper==1.2.68
 beautifulsoup4==4.12.2
-aiohttp==3.8.6
+aiohttp>=3.9.0
 gunicorn==21.2.0
