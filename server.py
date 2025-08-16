@@ -863,6 +863,34 @@ HTML_TEMPLATE = """
             color: var(--text-color);
         }
         
+        /* Footer Styles */
+        footer {
+            background: var(--secondary-color);
+            color: var(--white);
+            padding: 30px 20px;
+            border-top: var(--border-width) solid var(--text-color);
+            box-shadow: 0 -var(--shadow-offset) 0 var(--text-color);
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 40px;
+        }
+        
+        footer p {
+            margin: 10px 0;
+        }
+        
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 900;
+        }
+        
+        footer a:hover {
+            color: var(--warning-color);
+        }
+        
         /* Responsive Design */
         @media (min-width: 480px) {
             .anime-grid {
@@ -1133,6 +1161,12 @@ HTML_TEMPLATE = """
         </div>
         {% endif %}
     </div>
+
+    <footer>
+        <p>&copy; 2025 Anicute. All rights reserved.</p>
+        <p>DMCA Compliance: We respect the intellectual property rights of others. All media content on this site is served by third-party providers, and we do not claim ownership of any media displayed. Anicute acts solely as a platform to aggregate and serve this content.</p>
+        <p>For DMCA complaints or content removal requests, please contact us at <a href="mailto:02qttt@gmail.com">02qttt@gmail.com</a>.</p>
+    </footer>
 
     <script>
         function toggleMobileMenu() {
