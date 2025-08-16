@@ -1006,7 +1006,7 @@ HTML_TEMPLATE = """
             
             <nav>
                 <a href="/">Home</a>
-                <a href="/new">New</a>
+                <a href="/new">Latest</a>
                 <a href="/trending">Trending</a>
             </nav>
             
@@ -1015,7 +1015,7 @@ HTML_TEMPLATE = """
             <!-- Mobile Menu -->
             <div class="mobile-menu" id="mobileMenu">
                 <a href="/">Home</a>
-                <a href="/new">New Releases</a>
+                <a href="/new">Latest Episode</a>
                 <a href="/trending">Trending</a>
             </div>
         </div>
@@ -1558,7 +1558,7 @@ def new_releases():
         'has_next': len(anime_list) > 0 if anime_list else True
     }
     return render_template_string(HTML_TEMPLATE, 
-                               page_title="NEW ANIME RELEASES",
+                               page_title="LATEST EPISDOE",
                                anime_list=anime_list,
                                error=error,
                                debug_info=debug_info,
