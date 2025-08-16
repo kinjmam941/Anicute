@@ -593,11 +593,45 @@ HTML_TEMPLATE = """
             box-shadow: 5px 5px 0 var(--text-color);
         }
         
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--secondary-color);
+            border: var(--border-width) solid var(--text-color);
+            border-top: none;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--text-color);
+            z-index: 999;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-menu a {
+            display: block;
+            color: var(--white);
+            text-decoration: none;
+            padding: 15px 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu a:hover {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+        
         /* Anime Grid */
         .anime-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
             margin: 50px 0;
         }
         
@@ -608,6 +642,9 @@ HTML_TEMPLATE = """
             overflow: hidden;
             transition: all 0.4s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .anime-card:hover {
@@ -617,10 +654,12 @@ HTML_TEMPLATE = """
         
         .anime-image {
             width: 100%;
-            height: 300px;
+            height: 200px;
             object-fit: cover;
+            object-position: center;
             border-bottom: var(--border-width) solid var(--text-color);
             transition: transform 0.4s ease;
+            flex-shrink: 0;
         }
         
         .anime-card:hover .anime-image {
@@ -628,16 +667,20 @@ HTML_TEMPLATE = """
         }
         
         .anime-info {
-            padding: 25px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
         
         .anime-title {
             font-weight: 900;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
             color: var(--text-color);
             line-height: 1.2;
             text-transform: uppercase;
+            height: 2.4em;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -648,8 +691,8 @@ HTML_TEMPLATE = """
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            font-size: 1rem;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
             color: var(--text-color);
             font-weight: 700;
         }
@@ -657,25 +700,25 @@ HTML_TEMPLATE = """
         .episode-info {
             background: var(--primary-color);
             color: var(--white);
-            padding: 8px 15px;
+            padding: 6px 12px;
             border: 2px solid var(--text-color);
             font-weight: 900;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
         }
         
         .anime-genres {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
         
         .genre-tag {
             background: var(--accent-color);
             color: var(--text-color);
-            padding: 6px 12px;
-            font-size: 0.8rem;
+            padding: 4px 10px;
+            font-size: 0.7rem;
             font-weight: 700;
             border: 2px solid var(--text-color);
             text-transform: uppercase;
@@ -683,8 +726,9 @@ HTML_TEMPLATE = """
         
         .anime-description {
             color: var(--text-color);
-            font-size: 1rem;
-            margin-bottom: 25px;
+            font-size: 0.9rem;
+            margin-bottom: auto;
+            height: 4.2em;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -697,17 +741,19 @@ HTML_TEMPLATE = """
             display: block;
             background: var(--primary-color);
             color: var(--white);
-            padding: 18px 0;
+            padding: 15px 0;
             text-align: center;
             text-decoration: none;
             font-weight: 900;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             border: 3px solid var(--text-color);
             text-transform: uppercase;
             box-shadow: 4px 4px 0 var(--text-color);
+            margin-top: 20px;
+            flex-shrink: 0;
         }
         
         .watch-btn::before {
@@ -818,6 +864,21 @@ HTML_TEMPLATE = """
         }
         
         /* Responsive Design */
+        @media (min-width: 480px) {
+            .anime-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+            }
+            
+            .anime-image {
+                height: 220px;
+            }
+            
+            .anime-title {
+                font-size: 1.2rem;
+            }
+        }
+        
         @media (min-width: 768px) {
             .header-container {
                 flex-wrap: nowrap;
@@ -841,8 +902,21 @@ HTML_TEMPLATE = """
             }
             
             .anime-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 35px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 30px;
+            }
+            
+            .anime-image {
+                height: 250px;
+            }
+            
+            .anime-info {
+                padding: 25px;
+            }
+            
+            .anime-title {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
             }
             
             .episode-input-section {
@@ -868,7 +942,11 @@ HTML_TEMPLATE = """
         
         @media (min-width: 1024px) {
             .anime-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .anime-image {
+                height: 280px;
             }
             
             .episode-stats {
@@ -878,7 +956,7 @@ HTML_TEMPLATE = """
         
         @media (min-width: 1200px) {
             .anime-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
         }
     </style>
@@ -904,7 +982,14 @@ HTML_TEMPLATE = """
                 <a href="/trending">Trending</a>
             </nav>
             
-            <button class="mobile-menu-btn" aria-label="Open menu">MENU</button>
+            <button class="mobile-menu-btn" aria-label="Open menu" onclick="toggleMobileMenu()">MENU</button>
+            
+            <!-- Mobile Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="/">Home</a>
+                <a href="/new">New Releases</a>
+                <a href="/trending">Trending</a>
+            </div>
         </div>
     </header>
 
@@ -1050,6 +1135,33 @@ HTML_TEMPLATE = """
     </div>
 
     <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            mobileMenu.classList.toggle('active');
+            
+            if (mobileMenu.classList.contains('active')) {
+                menuBtn.textContent = 'CLOSE';
+                menuBtn.classList.add('glitch');
+            } else {
+                menuBtn.textContent = 'MENU';
+                menuBtn.classList.remove('glitch');
+            }
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!menuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+                menuBtn.textContent = 'MENU';
+                menuBtn.classList.remove('glitch');
+            }
+        });
+        
         function loadEpisode() {
             const episodeNumber = document.getElementById('episodeNumber').value;
             if (!episodeNumber) {
