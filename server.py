@@ -1920,8 +1920,7 @@ def discover_anime_episodes(link_url):
     video_src = extract_video_src(embed_url)
     
     # Extract anime title for better page title
-    anime_title = title_slug.replace('-', ' ').title()
-    episode_num = episode_nav['current_episode']
+    
     page_title = f"Watch {anime_title} - Episode {episode_num}"
     latest_episode = get_latest_episode(title_slug)
     
