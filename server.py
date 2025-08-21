@@ -13,7 +13,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# HTML template with premium black and white design (Zara-inspired)
+# HTML template with premium black and white design (Zara-inspired) + Dark Mode
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +36,19 @@ HTML_TEMPLATE = """
             --shadow-hover: 0 4px 20px rgba(0,0,0,0.1);
             --transition: all 0.3s ease;
         }
+
+        [data-theme="dark"] {
+            --primary-black: #ffffff;
+            --primary-white: #0a0a0a;
+            --light-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --dark-gray: #cccccc;
+            --text-gray: #999999;
+            --hover-gray: #2a2a2a;
+            --border-color: #333333;
+            --shadow-subtle: 0 2px 10px rgba(255,255,255,0.05);
+            --shadow-hover: 0 4px 20px rgba(255,255,255,0.1);
+        }
         
         * {
             box-sizing: border-box;
@@ -50,6 +63,7 @@ HTML_TEMPLATE = """
             line-height: 1.6;
             min-height: 100vh;
             font-weight: 400;
+            transition: var(--transition);
         }
         
         /* Header Styles */
@@ -61,6 +75,7 @@ HTML_TEMPLATE = """
             top: 0;
             z-index: 1000;
             backdrop-filter: blur(10px);
+            transition: var(--transition);
         }
         
         .header-container {
@@ -103,11 +118,30 @@ HTML_TEMPLATE = """
             font-weight: 700;
             letter-spacing: -0.01em;
         }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            background: var(--primary-white);
+            border: 1px solid var(--border-color);
+            color: var(--primary-black);
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            border-radius: 0;
+            order: 2;
+        }
+
+        .theme-toggle:hover {
+            background: var(--hover-gray);
+        }
         
         nav {
             display: none;
             gap: 40px;
-            order: 3;
+            order: 4;
         }
         
         nav a {
@@ -149,7 +183,7 @@ HTML_TEMPLATE = """
             padding: 10px 0;
             cursor: pointer;
             transition: var(--transition);
-            order: 2;
+            order: 3;
             letter-spacing: 0.05em;
         }
         
@@ -160,7 +194,7 @@ HTML_TEMPLATE = """
         .search-container {
             position: relative;
             width: 100%;
-            order: 4;
+            order: 5;
         }
         
         .search-bar {
@@ -186,6 +220,7 @@ HTML_TEMPLATE = """
             font-weight: 400;
             outline: none;
             font-family: inherit;
+            transition: var(--transition);
         }
         
         .search-bar input::placeholder {
@@ -217,6 +252,183 @@ HTML_TEMPLATE = """
             margin: 0 auto;
             padding: 40px 30px;
         }
+
+        /* Netflix-style Trending Slider */
+        .trending-section {
+            margin: 60px 0;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: var(--primary-black);
+            letter-spacing: -0.01em;
+        }
+
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            margin: 0 -30px;
+            padding: 0 30px;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.5s ease;
+            gap: 20px;
+        }
+
+        .slider-item {
+            min-width: 280px;
+            flex-shrink: 0;
+            background: var(--primary-white);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .slider-item:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-hover);
+            z-index: 2;
+        }
+
+        .slider-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .slider-item:hover img {
+            opacity: 0.9;
+        }
+
+        .slider-info {
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .slider-item:hover .slider-info {
+            transform: translateY(0);
+        }
+
+        [data-theme="dark"] .slider-info {
+            background: linear-gradient(transparent, rgba(255,255,255,0.9));
+            color: var(--primary-black);
+        }
+
+        .slider-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .slider-episode {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .slider-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .slider-genre {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        [data-theme="dark"] .slider-genre {
+            background: rgba(0,0,0,0.2);
+            border-color: rgba(0,0,0,0.3);
+        }
+
+        .slider-watch-btn {
+            display: inline-block;
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .slider-watch-btn:hover {
+            background: var(--dark-gray);
+            color: var(--primary-white);
+        }
+
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-black);
+            color: var(--primary-white);
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            z-index: 3;
+        }
+
+        .slider-nav:hover {
+            background: var(--dark-gray);
+        }
+
+        .slider-nav.prev {
+            left: 0;
+        }
+
+        .slider-nav.next {
+            right: 0;
+        }
+
+        /* Latest Episodes Section */
+        .latest-episodes-section {
+            margin: 60px 0;
+        }
+
+        .latest-episodes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .view-more-btn {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            letter-spacing: 0.02em;
+            border: 1px solid var(--primary-black);
+        }
+
+        .view-more-btn:hover {
+            background: var(--dark-gray);
+            color: var(--primary-white);
+        }
         
         /* Page Title */
         .page-title {
@@ -236,6 +448,7 @@ HTML_TEMPLATE = """
             padding: 40px;
             margin: 40px 0;
             box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
         }
         
         .anime-details {
@@ -250,6 +463,7 @@ HTML_TEMPLATE = """
             padding: 30px;
             background: var(--light-gray);
             border: 1px solid var(--border-color);
+            transition: var(--transition);
         }
         
         .anime-title-main {
@@ -309,6 +523,7 @@ HTML_TEMPLATE = """
             border: 1px solid var(--border-color);
             background: var(--light-gray);
             color: var(--primary-black);
+            transition: var(--transition);
         }
         
         .discovery-loading {
@@ -333,6 +548,7 @@ HTML_TEMPLATE = """
             border: 1px solid var(--border-color);
             font-weight: 400;
             line-height: 1.6;
+            transition: var(--transition);
         }
         
         /* Video Player */
@@ -366,6 +582,7 @@ HTML_TEMPLATE = """
             padding: 40px;
             margin: 40px 0;
             box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
         }
         
         .episode-input-section {
@@ -482,6 +699,7 @@ HTML_TEMPLATE = """
             border: 1px solid var(--border-color);
             max-height: 400px;
             overflow-y: auto;
+            transition: var(--transition);
         }
         
         .episode-item {
@@ -525,6 +743,7 @@ HTML_TEMPLATE = """
             border-top: none;
             box-shadow: var(--shadow-hover);
             z-index: 999;
+            transition: var(--transition);
         }
         
         .mobile-menu.active {
@@ -641,6 +860,7 @@ HTML_TEMPLATE = """
             font-weight: 500;
             border: 1px solid var(--border-color);
             letter-spacing: 0.02em;
+            transition: var(--transition);
         }
         
         .anime-description {
@@ -701,6 +921,7 @@ HTML_TEMPLATE = """
             padding: 60px;
             background: var(--light-gray);
             border: 1px solid var(--border-color);
+            transition: var(--transition);
         }
         
         .error {
@@ -713,6 +934,7 @@ HTML_TEMPLATE = """
             border: 1px solid var(--border-color);
             margin: 40px 0;
             line-height: 1.6;
+            transition: var(--transition);
         }
         
         /* Pagination */
@@ -750,6 +972,7 @@ HTML_TEMPLATE = """
             font-weight: 400;
             margin-top: 60px;
             line-height: 1.6;
+            transition: var(--transition);
         }
         
         footer p {
@@ -779,6 +1002,10 @@ HTML_TEMPLATE = """
             .anime-image {
                 height: 240px;
             }
+
+            .slider-item {
+                min-width: 250px;
+            }
         }
         
         @media (min-width: 768px) {
@@ -789,7 +1016,7 @@ HTML_TEMPLATE = """
             
             .search-container {
                 flex-grow: 1;
-                order: 2;
+                order: 4;
                 width: auto;
                 max-width: 500px;
             }
@@ -801,6 +1028,10 @@ HTML_TEMPLATE = """
             nav {
                 display: flex;
                 order: 3;
+            }
+
+            .theme-toggle {
+                order: 2;
             }
             
             .anime-grid {
@@ -836,6 +1067,10 @@ HTML_TEMPLATE = """
                 grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
                 gap: 8px;
             }
+
+            .slider-item {
+                min-width: 280px;
+            }
         }
         
         @media (min-width: 1024px) {
@@ -850,11 +1085,19 @@ HTML_TEMPLATE = """
             .episode-stats {
                 grid-template-columns: repeat(4, 1fr);
             }
+
+            .slider-item {
+                min-width: 320px;
+            }
         }
         
         @media (min-width: 1200px) {
             .anime-grid {
                 grid-template-columns: repeat(5, 1fr);
+            }
+
+            .slider-item {
+                min-width: 350px;
             }
         }
     </style>
@@ -866,6 +1109,10 @@ HTML_TEMPLATE = """
                 <img src="https://i.pinimg.com/736x/83/c3/44/83c344c68b92ac98c4c1451d4d0478e6.jpg" alt="Anicute Logo">
                 <span class="logo-text">ANICUTE</span>
             </a>
+
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+                <span id="themeToggleText">🌙 DARK</span>
+            </button>
             
             <div class="search-container">
                 <form class="search-bar" action="/search" method="GET">
@@ -892,6 +1139,71 @@ HTML_TEMPLATE = """
     </header>
 
     <div class="container">
+        {% if is_home %}
+        <h1 class="page-title">{{ page_title }}</h1>
+
+        <!-- Netflix-style Trending Slider -->
+        {% if trending_anime %}
+        <div class="trending-section">
+            <h2 class="section-title">🔥 Trending This Week</h2>
+            <div class="slider-container" id="trendingSlider">
+                <button class="slider-nav prev" onclick="slideLeft('trendingSlider')">‹</button>
+                <div class="slider-wrapper" id="trendingWrapper">
+                    {% for anime in trending_anime %}
+                    <div class="slider-item">
+                        <img src="{{ anime.thumbnail_url }}" alt="{{ anime.title }}" 
+                             onerror="this.src='https://via.placeholder.com/350x200/f5f5f5/666666?text=NO+IMAGE'">
+                        <div class="slider-info">
+                            <div class="slider-title">{{ anime.title }}</div>
+                            <div class="slider-episode">Episode {{ anime.episode }}</div>
+                            <div class="slider-genres">
+                                {% for genre in anime.genres.split(', ')[:3] %}
+                                <span class="slider-genre">{{ genre }}</span>
+                                {% endfor %}
+                            </div>
+                            <a href="/watch/{{ anime.link_url }}" class="slider-watch-btn">Watch Now</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="slider-nav next" onclick="slideRight('trendingSlider')">›</button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Latest Episodes Section -->
+        {% if latest_episodes %}
+        <div class="latest-episodes-section">
+            <div class="latest-episodes-header">
+                <h2 class="section-title">📺 Latest Episodes</h2>
+                <a href="/new" class="view-more-btn">View More Recent Episodes</a>
+            </div>
+            <div class="anime-grid">
+                {% for anime in latest_episodes %}
+                <div class="anime-card">
+                    <img src="{{ anime.thumbnail_url }}" alt="{{ anime.title }}" class="anime-image" 
+                         onerror="this.src='https://via.placeholder.com/400x300/f5f5f5/666666?text=NO+IMAGE'">
+                    <div class="anime-info">
+                        <div class="anime-title">{{ anime.title }}</div>
+                        <div class="anime-meta">
+                            <div class="episode-info">EP {{ anime.episode }}</div>
+                            <div>{{ anime.year }}</div>
+                        </div>
+                        <div class="anime-genres">
+                            {% for genre in anime.genres.split(', ')[:3] %}
+                            <span class="genre-tag">{{ genre }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="anime-description">{{ anime.description }}</div>
+                        <a href="/watch/{{ anime.link_url }}" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
         <h1 class="page-title">{{ page_title }}</h1>
 
         {% if embed_url %}
@@ -987,7 +1299,7 @@ HTML_TEMPLATE = """
             </div>
             {% endif %}
         </div>
-        {% elif not anime_list and not embed_url %}
+        {% elif not anime_list and not embed_url and not is_home %}
         <div class="loading">
             <div class="loading-spinner"></div>
             Loading anime...
@@ -1030,6 +1342,7 @@ HTML_TEMPLATE = """
             {% endif %}
         </div>
         {% endif %}
+        {% endif %}
     </div>
 
     <footer>
@@ -1039,6 +1352,61 @@ HTML_TEMPLATE = """
     </footer>
 
     <script>
+        // Dark Mode Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggleText = document.getElementById('themeToggleText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggleText.textContent = '🌙 DARK';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggleText.textContent = '☀️ LIGHT';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggleText = document.getElementById('themeToggleText');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeToggleText.textContent = '☀️ LIGHT';
+            } else {
+                themeToggleText.textContent = '🌙 DARK';
+            }
+        });
+
+        // Netflix-style Slider functionality
+        function slideLeft(sliderId) {
+            const slider = document.getElementById(sliderId);
+            const wrapper = slider.querySelector('.slider-wrapper');
+            const itemWidth = wrapper.querySelector('.slider-item').offsetWidth + 20; // including gap
+            const currentTransform = getTranslateX(wrapper);
+            
+            wrapper.style.transform = `translateX(${Math.min(currentTransform + itemWidth * 3, 0)}px)`;
+        }
+
+        function slideRight(sliderId) {
+            const slider = document.getElementById(sliderId);
+            const wrapper = slider.querySelector('.slider-wrapper');
+            const itemWidth = wrapper.querySelector('.slider-item').offsetWidth + 20; // including gap
+            const maxScroll = -(wrapper.scrollWidth - slider.offsetWidth);
+            const currentTransform = getTranslateX(wrapper);
+            
+            wrapper.style.transform = `translateX(${Math.max(currentTransform - itemWidth * 3, maxScroll)}px)`;
+        }
+
+        function getTranslateX(element) {
+            const style = window.getComputedStyle(element);
+            const matrix = new DOMMatrix(style.transform);
+            return matrix.m41;
+        }
+
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
             const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -1132,6 +1500,13 @@ HTML_TEMPLATE = """
                     loadEpisode();
                 }
             }
+            
+            // Dark mode toggle with 'D' key
+            if (e.key === 'd' || e.key === 'D') {
+                if (!e.target.matches('input, textarea')) {
+                    toggleTheme();
+                }
+            }
         });
         
         // Smooth scrolling for better UX
@@ -1143,6 +1518,47 @@ HTML_TEMPLATE = """
                 });
             });
         });
+
+        // Touch support for slider
+        let startX, currentX;
+        let sliderContainer = null;
+
+        document.querySelectorAll('.slider-container').forEach(slider => {
+            slider.addEventListener('touchstart', handleTouchStart, {passive: true});
+            slider.addEventListener('touchmove', handleTouchMove, {passive: true});
+            slider.addEventListener('touchend', handleTouchEnd, {passive: true});
+        });
+
+        function handleTouchStart(e) {
+            startX = e.touches[0].clientX;
+            sliderContainer = e.currentTarget;
+        }
+
+        function handleTouchMove(e) {
+            if (!startX) return;
+            currentX = e.touches[0].clientX;
+        }
+
+        function handleTouchEnd(e) {
+            if (!startX || !currentX) return;
+
+            const diffX = startX - currentX;
+            const threshold = 50;
+
+            if (Math.abs(diffX) > threshold) {
+                if (diffX > 0) {
+                    // Swipe left - slide right
+                    slideRight(sliderContainer.id);
+                } else {
+                    // Swipe right - slide left
+                    slideLeft(sliderContainer.id);
+                }
+            }
+
+            startX = null;
+            currentX = null;
+            sliderContainer = null;
+        }
     </script>
 </body>
 </html>
@@ -1359,16 +1775,33 @@ def get_episode_navigation(link_url):
 
 @app.route('/')
 def home():
-    anime_list = fetch_api_data("https://animeapi.skin/trending")
+    # Fetch both trending and latest episodes for home page
+    trending_anime = fetch_api_data("https://animeapi.skin/trending")
+    latest_episodes = fetch_api_data("https://animeapi.skin/new?page=1")
+    
     error = None
     debug_info = None
-    if anime_list is None:
+    
+    # Handle fallbacks
+    if trending_anime is None:
         error = "Failed to load trending anime. Using fallback content."
         debug_info = "Cloudflare protection may be active. Try again later or use a VPN/proxy."
-        anime_list = get_fallback_data()
+        trending_anime = get_fallback_data()
+    
+    if latest_episodes is None:
+        if not error:  # Only set if not already set
+            error = "Failed to load latest episodes. Using fallback content."
+            debug_info = "Cloudflare protection may be active. Try again later or use a VPN/proxy."
+        latest_episodes = get_fallback_data()
+    
+    # Limit latest episodes to 20 for home page
+    if latest_episodes and len(latest_episodes) > 20:
+        latest_episodes = latest_episodes[:20]
+    
     return render_template_string(HTML_TEMPLATE, 
                                page_title="Welcome to Anicute",
-                               anime_list=anime_list,
+                               trending_anime=trending_anime,
+                               latest_episodes=latest_episodes,
                                error=error,
                                debug_info=debug_info,
                                is_home=True)
