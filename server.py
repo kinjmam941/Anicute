@@ -107,8 +107,8 @@ HTML_TEMPLATE = """
         }
         
         .logo img {
-            height: 110px;
-            width: 110px;
+            height: 90px;
+            width: 90px;
             border-radius: 50%;
             margin-right: 12px;
             object-fit: cover;
